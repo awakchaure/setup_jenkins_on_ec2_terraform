@@ -5,7 +5,7 @@ resource "tls_private_key" "keyt1" {
 }
 resource "aws_key_pair" "key" {
   key_name   = "keyt1"
-  public_key = "${tls_private_key.keyt1.public_key_openssh}"
+  public_key = tls_private_key.keyt1.public_key_openssh
   depends_on = [
     tls_private_key.keyt1
   ]

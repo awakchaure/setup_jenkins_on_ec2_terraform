@@ -29,7 +29,7 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-resource "aws_internet_gateway" "testapp_internet_gateway" {
+resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
@@ -54,6 +54,6 @@ resource "aws_route_table" "route_table" {
 }
 
 resource "aws_route_table_association" "custom-rtb-public-subnet" {
-  route_table_id = aws_route_table.testapp_route_table.id
-  subnet_id      = aws_subnet.public_subnet.*.id
+  route_table_id = aws_route_table.route_table.id
+  subnet_id      = aws_subnet.public_subnet.id
 }
