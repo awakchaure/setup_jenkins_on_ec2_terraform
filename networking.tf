@@ -57,3 +57,28 @@ resource "aws_route_table_association" "custom-rtb-public-subnet" {
   route_table_id = aws_route_table.route_table.id
   subnet_id      = aws_subnet.public_subnet.id
 }
+
+resource "aws_eip" "nat_gateway" {
+  vpc = true
+}
+
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = aws_eip.nat_gateway.id
+  subnet_id     = aws_subnet.private_subnet.id
+  tags = {
+    "Name" = "NatGateway"
+  }
+}
+
+resource "aws_route_table" "private_instance" {
+  vpc_id = aws_vpc.vpc.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+  }
+}
+
+resource "aws_route_table_association" "private_instance" {
+  subnet_id      = aws_subnet.private_subnet.id
+  route_table_id = aws_route_table.private_instance.id
+}

@@ -5,7 +5,7 @@ locals {
 resource "aws_security_group" "web_traffic" {
   name        = "allow_web_traffic"
   description = "inbound ports for ssh and standard http and everything outbound"
-
+  vpc_id      = aws_vpc.vpc.id
   dynamic "ingress" {
     for_each = local.ingressrules
     content {
@@ -24,5 +24,26 @@ resource "aws_security_group" "web_traffic" {
 
   tags = {
     "Terraform" = "true"
+  }
+}
+
+resource "aws_security_group" "private_ssh" {
+  name        = "private-sg"
+  description = "For SSH Connections to EC2"
+  vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    description = "Allow SSH Connections"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = aws_subnet.public_subnet.cidr_block
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
