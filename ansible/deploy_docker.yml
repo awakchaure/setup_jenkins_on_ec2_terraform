@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: stop if we have old docker container
+    command: docker stop petclinic-webapp
+    ignore_errors: yes
+
+  - name: remove stopped docker container
+    command: docker rm petclinic-webapp
+    ignore_errors: yes
+
+  - name: remove current docker image
+    command: docker rmi petclinic-webapp
+    ignore_errors: yes
+
+  - name: creating docker image
+    command: docker run -d --name petclinic-webapp -p 8080:8080 devops-image

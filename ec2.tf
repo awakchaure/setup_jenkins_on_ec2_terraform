@@ -19,13 +19,12 @@ resource "aws_instance" "jenkins_server" {
   ami             = var.ami_id
   instance_type   = var.instance_type
   key_name        = aws_key_pair.key.key_name
-  security_groups = [aws_security_group.web_traffic.id, aws_security_group.private_ssh.id]
+  security_groups = [aws_security_group.web_traffic.id]
   subnet_id       = aws_subnet.public_subnet.id
   root_block_device {
     volume_size = 10
     volume_type = "gp2"
   }
-  delete_on_termination = false
 
   user_data = <<EOF
         echo "installing ansible"
@@ -48,7 +47,7 @@ resource "aws_instance" "jenkins_server" {
 
 
 resource "aws_ebs_volume" "ebs_volume" {
-  availability_zone = "us-east-1b"
+  availability_zone = "us-east-1a"
   size              = 20
   tags = {
     Name = "jenkins-ebs"
@@ -67,7 +66,7 @@ resource "aws_instance" "application_server" {
   ami             = var.ami_id
   instance_type   = var.instance_type
   key_name        = aws_key_pair.key.key_name
-  security_groups = [aws_security_group.web_traffic.id]
+  security_groups = [aws_security_group.web_traffic.id ,aws_security_group.private_ssh.id ]
   subnet_id       = aws_subnet.private_subnet.id
 
   root_block_device {
